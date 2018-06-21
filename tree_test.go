@@ -126,7 +126,5 @@ func ExampleNewTreeWriter() {
 	// ├── A
 	// │   ├── 1
 	// │   └── 2
-	// ├── B
-	// ├── C
 	// └── message
 }
