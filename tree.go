@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"unicode/utf8"
 )
 
 // TreeWriter is an implementation of an io.Writer which prints a tree-like
@@ -73,6 +74,47 @@ func (w *TreeWriter) WriteString(s string) (int, error) {
 	return w.Write([]byte(s))
 }
 
+// WriteByte writes b to w.
+func (w *TreeWriter) WriteByte(b byte) error {
+	w.content = append(w.content, b)
+	return nil
+}
+
+// WriteRune writes r to w.
+func (w *TreeWriter) WriteRune(r rune) (int, error) {
+	b := [8]byte{}
+	n := utf8.EncodeRune(b[:], r)
+	w.content = append(w.content, b[:n]...)
+	return n, nil
+}
+
+// Width satisfies the fmt.State interface.
+func (w *TreeWriter) Width() (int, bool) {
+	f, ok := Base(w.Root()).(fmt.State)
+	if ok {
+		return f.Width()
+	}
+	return 0, false
+}
+
+// Precision satisfies the fmt.State interface.
+func (w *TreeWriter) Precision() (int, bool) {
+	f, ok := Base(w.Root()).(fmt.State)
+	if ok {
+		return f.Precision()
+	}
+	return 0, false
+}
+
+// Flag satisfies the fmt.State interface.
+func (w *TreeWriter) Flag(c int) bool {
+	f, ok := Base(w.Root()).(fmt.State)
+	if ok {
+		return f.Flag(c)
+	}
+	return false
+}
+
 // Close closes w, causing all buffered content to be flushed to its underlying
 // writer, and future write operations to error with io.ErrClosedPipe.
 func (w *TreeWriter) Close() (err error) {
@@ -116,6 +158,12 @@ func (w *TreeWriter) Close() (err error) {
 
 	return
 }
+
+var (
+	_ io.Writer       = (*TreeWriter)(nil)
+	_ io.StringWriter = (*TreeWriter)(nil)
+	_ fmt.State       = (*TreeWriter)(nil)
+)
 
 type treeCtx struct {
 	index       int  // index of the node
