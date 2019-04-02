@@ -19,7 +19,7 @@ func TestTreeWriter(t *testing.T) {
 	w3 := NewTreeWriter(w)
 
 	w1.WriteString("A")
-	w2.WriteString("B\n(newline)")
+	w2.WriteString("B\n(newline)\n")
 	w3.WriteString("C")
 
 	w21 := NewTreeWriter(w2)
@@ -38,8 +38,8 @@ func TestTreeWriter(t *testing.T) {
 
 	if expected != found {
 		t.Error("content mismatch")
-		t.Logf("expected: %q", expected)
-		t.Logf("found:    %q", found)
+		t.Logf("expected: %s", expected)
+		t.Logf("found:    %s", found)
 	}
 
 }

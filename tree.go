@@ -1,6 +1,7 @@
 package textio
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 )
@@ -123,9 +124,7 @@ type treeCtx struct {
 }
 
 func (ctx *treeCtx) last() bool {
-	i := ctx.index
-	n := ctx.length - 1
-	return !(i < n)
+	return ctx.index == (ctx.length - 1)
 }
 
 type treeWriter struct {
@@ -177,7 +176,7 @@ func (w *treeWriter) writeTree(ctx treeCtx, node *TreeWriter) {
 	w.push(ctx)
 
 	ctx.length = len(node.children)
-	ctx.needNewLine = true
+	ctx.needNewLine = !bytes.HasSuffix(node.content, []byte("\n"))
 
 	for i, child := range node.children {
 		ctx.index = i
