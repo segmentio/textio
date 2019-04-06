@@ -2,6 +2,7 @@ package textio
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 )
 
@@ -73,6 +74,33 @@ func (w *PrefixWriter) Flush() error {
 	return err
 }
 
+// Width satisfies the fmt.State interface.
+func (w *PrefixWriter) Width() (int, bool) {
+	f, ok := Base(w).(fmt.State)
+	if ok {
+		return f.Width()
+	}
+	return 0, false
+}
+
+// Precision satisfies the fmt.State interface.
+func (w *PrefixWriter) Precision() (int, bool) {
+	f, ok := Base(w).(fmt.State)
+	if ok {
+		return f.Precision()
+	}
+	return 0, false
+}
+
+// Flag satisfies the fmt.State interface.
+func (w *PrefixWriter) Flag(c int) bool {
+	f, ok := Base(w).(fmt.State)
+	if ok {
+		return f.Flag(c)
+	}
+	return false
+}
+
 func (w *PrefixWriter) writeLine(b []byte) (int, error) {
 	if _, err := w.write(w.indent); err != nil {
 		return 0, err
@@ -128,3 +156,7 @@ func forEachLine(b []byte, do func([]byte) bool) {
 func isLine(b []byte) bool {
 	return len(b) != 0 && b[len(b)-1] == '\n'
 }
+
+var (
+	_ fmt.State = (*PrefixWriter)(nil)
+)
