@@ -3,7 +3,7 @@ Go package providing tools for advanced text manipulations
 
 ## Motivation
 
-This package aims to provide a sutie of tools to deal with text parsing and
+This package aims to provide a suite of tools to deal with text parsing and
 formatting. It is intended to extend what the standard library already offers,
 and make it easy to integrate with it.
 
